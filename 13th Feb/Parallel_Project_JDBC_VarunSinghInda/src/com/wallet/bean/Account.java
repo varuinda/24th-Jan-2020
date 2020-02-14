@@ -37,6 +37,6 @@ public class Account {
 		this.balance = balance;
 	}
 	public String toString() {
-		return "Name: "+this.getName() + " ID: " + this.getId()+ " Balance: "+this.getBalance() + " Account created on: "+this.getDate();
+		return "Name: "+this.getName() +" Balance: "+this.getBalance() + " Account created on: "+this.getDate();
 	}
 }

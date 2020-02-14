@@ -1,52 +1,90 @@
 package com.wallet.service;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+
 import com.wallet.bean.Account;
 import com.wallet.database.Data1;
 import com.wallet.database.Data2;
 
 public class WalletService implements WalletServiceInterface{
-	Account a = new Account();
-	Data1 d1 = new Data1();
-	Data2 d2 = new Data2();
 	int c = 0;
-	public void deposit(int id,int m,String d) {
-		d1.addMoney(id,m);
-		d2.creditTransaction(id,m,d);
+	Date d= new Date();
+	public int deposit(Account a,int m)throws SQLException{
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		d1.addMoney(a,m);
+		d2.creditTransaction(a,m);
+		return 1;
 	}
-	public void withdraw(int id,int m,String d) {
-		d1.withdrawMoney(id,m);
+	public int withdraw(Account a,int m)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		d1.withdrawMoney(a,m);
+		d2.debitTransaction(a, m);
+		return 1;
 	}
-	public int balanceCheck(int id) {
-		return d1.balance(id);
+	public int balanceCheck(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		return d1.balance(a);
 	}
-	public void allTransactions(int id) {
-			d2.transactions(id);
+	public ArrayList<String> allTransactions(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+			return d2.transactions(a);
 	}
-	public void createAccount(Account a) {
+	public void createAccount(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
 		d1.createAcc(a);
-		c++;
 	}
-	public void fundTransfer(int id,int m,int idp,String d) {
-		if(checkID(idp)) {	
-			d1.transfer(id,m,idp);
-			d1.withdrawMoney(id,m);
-			d2.debitTransaction(id,m,d);
-			d2.creditTransaction(idp, m, d);
+	public int fundTransfer(Account a,int m,int idp)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		//a.setId(idp);
+		Account b = new Account();
+		b.setDate(d.toString());
+		b.setId(idp);
+		if(d1.checkid(b)) {	
+			d1.transfer(a,m,idp);
+			//d1.withdrawMoney(id,m);
+			d2.debitTransaction(a,m);
+			d2.creditTransaction(b, m);
+			return 1;
+		}
+		return 0;
+	}
+	public ArrayList<String> allUsers()throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		return d1.showAll();
+	}
+	public boolean login(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		return d1.log(a);
+	}
+	public boolean checkID(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		return d1.checkid(a);
+	}
+	public void close()throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		d1.closeDB();
+	}
+	public int deleteID(Account a)throws SQLException {
+		Data1 d1 = new Data1();
+		Data2 d2 = new Data2();
+		if(d1.checkid(a)) {
+			d1.delete(a);
+			return 1;
 		}
 		else {
-			System.out.println("ID is not present in the database");
+			return 0;
 		}
-	}
-	public void allUsers() {
-		d1.showAll();
-	}
-	public boolean login(int id,String p) {
-		return d1.log(id,p);
-	}
-	public boolean checkID(int id) {
-		return d1.checkid(id);
-	}
-	public void close() {
-		d1.closeDB();
 	}
 }
