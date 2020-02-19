@@ -31,29 +31,32 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String login = request.getParameter("login");
+		
 		if(login!=null) {
 			if(check(username,password)) {
-				HttpSession session = request.getSession();
-				 session.setAttribute("isUserLoggedIn",true);
+				
+				// session.setAttribute("isUserLoggedIn",true);
 				try {
 					Class.forName("com.mysql.jdbc.Driver");
 					Connection dbCon = DriverManager.getConnection("jdbc:mysql://localhost:3307/ibmtraining?serverTimezone=IST","root","");
 					String idQry = "select * from website";
 					Statement stmt;
 					stmt = dbCon.createStatement();
+					HttpSession session = request.getSession();
 					ResultSet rs = stmt.executeQuery(idQry);
-					//ResultSet rs = pstmt.executeQuery(idQry);
 						while(rs.next()) {
 							if(rs.getString("username").equals(username) && rs.getString("password").equals(password)) {
-								response.setContentType("text/html");
-								response.getWriter().println("Name: "+rs.getString("name") + " Date of birth: "+rs.getString("date"));
-								RequestDispatcher dispatcher = request.getRequestDispatcher("active.html");
-								RequestDispatcher dispatcher1 = request.getRequestDispatcher("ActiveServlet");
-								dispatcher.include(request, response);
-								dispatcher1.include(request, response);
+								//response.setContentType("text/html");
+								//response.getWriter().println("Name: "+rs.getString("name") + " Date of birth: "+rs.getString("date"));
+								//RequestDispatcher dispatcher = request.getRequestDispatcher("active.html");
+								//dispatcher.include(request, response);
+								session.setAttribute("name", rs.getString("username"));
+								session.setAttribute("dob", rs.getString("date"));
+								response.sendRedirect("ActiveServlet");
 							}
 						}
 				} catch (SQLException e) {
@@ -63,10 +66,15 @@ public class LoginServlet extends HttpServlet {
 				}
 			}
 			else {
+			//	HttpSession session = request.getSession();
+			//	session.setAttribute("isUserLoggedIn",false);
+			//	session.invalidate();
 				response.setContentType("text/html");
 				response.getWriter().println("Login failed... Try again");
 				RequestDispatcher dispatcher = request.getRequestDispatcher("loginacc.html");
+				RequestDispatcher dispatcher1 = request.getRequestDispatcher("ActiveServlet");
 				dispatcher.include(request, response);
+				dispatcher1.include(request,response);
 			}
 		}
 	}

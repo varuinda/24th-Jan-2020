@@ -22,17 +22,22 @@ import javax.servlet.http.HttpSession;
 public class ActiveServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		//String logout = request.getParameter("logout");
+		HttpSession session=request.getSession(false); 
+		response.setContentType("text/html");
+		if(session!=null) {
+			//String email = (String) session.getAttribute("email");
+			response.getWriter().println("Welcome " + (String)session.getAttribute("name"));
+			response.getWriter().println("Date of Birth: "+(String)session.getAttribute("dob"));
+			response.getWriter().print("<br/><a href=\"logout\">Logout</a>");
+		}
+		else {
+			response.sendRedirect("index.html");
+		}
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-		HttpSession session = request.getSession();
-		String logout = request.getParameter("logout");
-		if((boolean) session.getAttribute("isUserLoggedIn")) {
+		
+		/*if(session!=null) {
 			if(logout!=null) {
 				response.setContentType("text/html");
 				response.getWriter().println("Successfully logged out");
@@ -42,11 +47,8 @@ public class ActiveServlet extends HttpServlet {
 			}
 		}
 		else {
-			response.setContentType("text/html");
-			response.getWriter().println("Cannot come to this page directly... Please login");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("loginacc.html");
-			dispatcher.include(request, response);
-		}
+			response.sendRedirect("loginacc.html");
+		}*/
 		
 	}
 
